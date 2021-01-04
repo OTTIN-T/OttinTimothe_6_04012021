@@ -1,0 +1,19 @@
+{
+  "name": "backend",
+  "version": "1.0.0",
+  "description": "backend du projet So Pekocko",
+  "main": "server.js",
+  "scripts": {
+    "test": "test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/OTTIN-T/OttinTimothe_6_04012021.git"
+  },
+  "author": "Ottin Timothé",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/OTTIN-T/OttinTimothe_6_04012021/issues"
+  },
+  "homepage": "https://github.com/OTTIN-T/OttinTimothe_6_04012021#readme"
+}
