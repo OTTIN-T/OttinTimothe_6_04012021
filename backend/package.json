@@ -4,7 +4,8 @@
   "description": "backend du projet So Pekocko",
   "main": "server.js",
   "scripts": {
-    "test": "test"
+    "test": "test",
+    "start": "nodemon server"
   },
   "repository": {
     "type": "git",
@@ -15,5 +16,8 @@
   "bugs": {
     "url": "https://github.com/OTTIN-T/OttinTimothe_6_04012021/issues"
   },
-  "homepage": "https://github.com/OTTIN-T/OttinTimothe_6_04012021#readme"
+  "homepage": "https://github.com/OTTIN-T/OttinTimothe_6_04012021#readme",
+  "dependencies": {
+    "express": "^4.17.1"
+  }
 }
