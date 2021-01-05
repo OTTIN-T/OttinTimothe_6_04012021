@@ -1,14 +1,14 @@
 const mongoose = require('mongoose') //On importe mongoose
+const uniqueValidator = require('mongoose-unique-validator') //On importe mongoose-unique-validator
 
-//Necessite npm install --save mongoose-unique-validator
-const uniqueValidator = require('mongoose-unique-validator') //On importe notre plugin unique validator
+//On utilise la fonction schema de mongoose
+const userSchema = mongoose.Schema({ //Objet qui va dicter les différents champs dont notre schema aura besoin 
+     email: { type: String, required: true, unique: true }, //type, required, unique sont des configuration
+     password: { type: String, required: true }
+})//Ceci est un schéma de donnée qui contient les champs souhaités pour chaque User
 
-const userSchema = mongoose.Schema({ //On utilise la méthode Schema de mongoose
-     email: {type: String, required: true, unique: true}, //unique vérifie que l'email soit unique dans la bdd
-     password: {type: String, required: true}
-})
+userSchema.plugin(uniqueValidator) //On applique notre plugin à notre schema avant d'en faire un model
+//nomDuSchemaUtilisé.plugin(nomDuPluginUtilisé)
 
-userSchema.plugin(uniqueValidator) // nomDuSchemaUtilisé.plugin(nomDuPluginUtilisé)
-//On applique notre plugin à notre schema avant d'en faire un model
-
-module.exports = mongoose.model('User', userSchema) //On exporte notre schéma ('nomDuSchema', leSchemaUtilisé) pour en faire un model
+//On exporte notre module
+module.exports = mongoose.model('User', userSchema) //Notre model mongoose avec notre schéma User ('nomDuModel', nomDuSchéma)
