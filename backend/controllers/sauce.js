@@ -36,19 +36,23 @@ exports.likeSauce = (req, res, next) => {
 
      Sauce.findOne({ _id: req.params.id }) //On va cherche l'id de l'item
           .then((sauce) => { //On récupère le json sauce
+               //Condition pour like/dislike
                if (like == 1) {
-                    sauce.usersLiked.push(userId)
-                    sauce.likes++
+                    sauce.usersLiked.push(userId) //On ajoute à notre tableau
+                    sauce.likes++ //Incrémente nos likes
                } else if (like == -1) {
                     sauce.usersDisliked.push(userId)
                     sauce.dislikes++
-               } else if (like == 0) {
-                    sauce.likes = 0
-                    sauce.usersLiked = []
-                    sauce.dislikes = 0
-                    sauce.usersDisliked = []
+               } else if (like == 0 && sauce.usersLiked.includes(userId)) { //On vérifie sir l'id user est présent
+                    sauce.likes--
+                    let pos = sauce.usersLiked.indexOf(userId) //On récupère l'index du userId ciblé
+                    sauce.usersLiked.splice(pos, 1) //On supprime l'ancien userId
+               } else if (like == 0 && sauce.usersDisliked.includes(userId)) {
+                    sauce.dislikes--
+                    let pos = sauce.usersDisliked.indexOf(userId)
+                    sauce.usersDisliked.splice(pos, 1) 
                }
-               Sauce.updateOne({ _id: req.params.id }, { usersLiked: sauce.usersLiked, usersDisliked: sauce.usersDisliked, dislikes: sauce.dislikes, likes: sauce.likes, _id: req.params.id }) //Nous utilisons le paramètre id passé dans la demande et le remplaçons par la Sauce passé comme second argument
+               Sauce.updateOne({ _id: req.params.id }, { usersLiked: sauce.usersLiked, usersDisliked: sauce.usersDisliked, dislikes: sauce.dislikes, likes: sauce.likes, _id: req.params.id }) //On update notre sauce
                     .then(() => res.status(200).json({ message: 'Objet modifié !' })) //Retour de notre promesse
                     .catch(error => res.status(400).json({ error })); //Erreur Bad Request
           })
