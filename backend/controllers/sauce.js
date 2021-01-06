@@ -13,6 +13,7 @@ exports.createSauce = (req, res, next) => { //middleware createSauce
      sauce.save() //La fonction save() enregistre notre Sauce dans la bdd
           .then(() => res.status(201).json({ message: 'Objet enregistré !' })) //On renvoie une réponse 
           .catch(error => res.status(400).json({ error })); //Erreur Bad Request
+     console.log("Crea sauceObject", sauceObject)
 }
 
 exports.modifySauce = (req, res, next) => {
@@ -21,45 +22,37 @@ exports.modifySauce = (req, res, next) => {
                ...JSON.parse(req.body.sauce), // On extrait l'objet json de sauce, req.body deviens sauceObject
                imageUrl: `${req.protocol}://${req.get('host')}/images/${req.file.filename}` //On modifie l'URL de l'image de manière dynamique 
           } : { ...req.body } //Si non on fait une copie de req.body
-     //updateOne() met à jour le Sauce qui correspond à l'objet que nous passons comme premier argument
-     Sauce.updateOne({ _id: req.params.id }, { ...sauceObject, _id: req.params.id }) //Nous utilisons le paramètre id passé dans la demande et le remplaçons par le Sauce passé comme second argument
+     //updateOne() met à jour la Sauce qui correspond à l'objet que nous passons comme premier argument
+     Sauce.updateOne({ _id: req.params.id }, { ...sauceObject, _id: req.params.id }) //Nous utilisons le paramètre id passé dans la demande et le remplaçons par la Sauce passé comme second argument
           .then(() => res.status(200).json({ message: 'Objet modifié !' })) //Retour de notre promesse
           .catch(error => res.status(400).json({ error })); //Erreur Bad Request
+
 }
 
 exports.likeSauce = (req, res, next) => {
-     const sauceObject = req.file ?
-          {
-               ...JSON.parse(req.body.sauce),
-          } : { ...req.body }
-     console.log("sauceObject", sauceObject)
-     Sauce.updateOne({})
+     const sauceObject = req.body //Renvoi ojbet avec userId et like
+     const userId = sauceObject.userId //Renvoi ID user
+     const like = sauceObject.like //Renvoi like: -1/0/1
 
-     /*
-     Définit le statut "j'aime" pour userID fourni. 
-     Si j'aime = 1,l'utilisateur aime la sauce. 
-     Si j'aime = 0, l'utilisateur annule ce qu'il aime ou ce qu'il n'aime pas. 
-     Si j'aime = -1, l'utilisateur n'aime pas la sauce.
-     L'identifiant de l'utilisateur doit être ajouté ou supprimé du tableau approprié, en
-     gardant une trace de ses préférences et en l'empêchant d'aimer ou de ne pas aimer la
-     même sauce plusieurs fois.Nombre total de "j'aime" et de "je n'aime pas" à mettre à jour
-     avec chaque "j'aime"
-     
-     sauceObject au clic de +/- { userId: '5ff461a61ff27649b89bfd3b', like: 1 }
-
-     sauceObject complet {
-     name: 'Test Name 2',
-     manufacturer: 'Test Manufacturer 2',
-     description: 'test',
-     mainPepper: 'Test Main Pepper Ingredient2 ',
-     heat: 1,
-     userId: '5ff461a61ff27649b89bfd3b'
-     }
-     */
-     // likes: { type: Number, default: 0 }, number — nombre d'utilisateurs qui aiment la sauce ;
-     // dislikes: { type: Number, default: 0 }, number — nombre d'utilisateurs qui n'aiment pas la sauce
-     // usersLiked: { type: Array, default: [] }, : [string] — tableau d'identifiants d'utilisateurs ayant aimé la sauce
-     // usersDisliked: { type: Array, default: [] } [string] — tableau d'identifiants d'utilisateurs n'ayant pas aimé la sauce
+     Sauce.findOne({ _id: req.params.id }) //On va cherche l'id de l'item
+          .then((sauce) => { //On récupère le json sauce
+               if (like == 1) {
+                    sauce.usersLiked.push(userId)
+                    sauce.likes++
+               } else if (like == -1) {
+                    sauce.usersDisliked.push(userId)
+                    sauce.dislikes++
+               } else if (like == 0) {
+                    sauce.likes = 0
+                    sauce.usersLiked = []
+                    sauce.dislikes = 0
+                    sauce.usersDisliked = []
+               }
+               Sauce.updateOne({ _id: req.params.id }, { usersLiked: sauce.usersLiked, usersDisliked: sauce.usersDisliked, dislikes: sauce.dislikes, likes: sauce.likes, _id: req.params.id }) //Nous utilisons le paramètre id passé dans la demande et le remplaçons par la Sauce passé comme second argument
+                    .then(() => res.status(200).json({ message: 'Objet modifié !' })) //Retour de notre promesse
+                    .catch(error => res.status(400).json({ error })); //Erreur Bad Request
+          })
+          .catch(error => res.status(400).json({ error })); //Erreur Bad Request
 }
 
 exports.deleteSauce = (req, res, next) => {
@@ -78,7 +71,7 @@ exports.deleteSauce = (req, res, next) => {
 
 exports.getOneSauce = (req, res, next) => {
      Sauce.findOne({ _id: req.params.id }) //findOne() trouve la Sauce unique ayant le même _id que le paramètre de la requête
-          .then((sauce) => { res.status(200).json(sauce), console.log("sauce", sauce) }) //Cette Sauce est ensuite retourné dans une Promise et envoyé au front-end
+          .then((sauce) => { res.status(200).json(sauce), console.log("Affiche sauceObject", sauce) }) //Cette Sauce est ensuite retourné dans une Promise et envoyé au front-end
           .catch((error) => { res.status(404).json({ error: error }) }) //Erreur Not found
 }
 
