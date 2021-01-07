@@ -13,7 +13,6 @@ exports.createSauce = (req, res, next) => { //middleware createSauce
      sauce.save() //La fonction save() enregistre notre Sauce dans la bdd
           .then(() => res.status(201).json({ message: 'Objet enregistré !' })) //On renvoie une réponse 
           .catch(error => res.status(400).json({ error })); //Erreur Bad Request
-     console.log("Crea sauceObject", sauceObject)
 }
 
 exports.modifySauce = (req, res, next) => {
@@ -26,7 +25,6 @@ exports.modifySauce = (req, res, next) => {
      Sauce.updateOne({ _id: req.params.id }, { ...sauceObject, _id: req.params.id }) //Nous utilisons le paramètre id passé dans la demande et le remplaçons par la Sauce passé comme second argument
           .then(() => res.status(200).json({ message: 'Objet modifié !' })) //Retour de notre promesse
           .catch(error => res.status(400).json({ error })); //Erreur Bad Request
-
 }
 
 exports.likeSauce = (req, res, next) => {
@@ -50,7 +48,7 @@ exports.likeSauce = (req, res, next) => {
                } else if (like == 0 && sauce.usersDisliked.includes(userId)) {
                     sauce.dislikes--
                     let pos = sauce.usersDisliked.indexOf(userId)
-                    sauce.usersDisliked.splice(pos, 1) 
+                    sauce.usersDisliked.splice(pos, 1)
                }
                Sauce.updateOne({ _id: req.params.id }, { usersLiked: sauce.usersLiked, usersDisliked: sauce.usersDisliked, dislikes: sauce.dislikes, likes: sauce.likes, _id: req.params.id }) //On update notre sauce
                     .then(() => res.status(200).json({ message: 'Objet modifié !' })) //Retour de notre promesse
@@ -75,7 +73,7 @@ exports.deleteSauce = (req, res, next) => {
 
 exports.getOneSauce = (req, res, next) => {
      Sauce.findOne({ _id: req.params.id }) //findOne() trouve la Sauce unique ayant le même _id que le paramètre de la requête
-          .then((sauce) => { res.status(200).json(sauce), console.log("Affiche sauceObject", sauce) }) //Cette Sauce est ensuite retourné dans une Promise et envoyé au front-end
+          .then((sauce) => { res.status(200).json(sauce) }) //Cette Sauce est ensuite retourné dans une Promise et envoyé au front-end
           .catch((error) => { res.status(404).json({ error: error }) }) //Erreur Not found
 }
 

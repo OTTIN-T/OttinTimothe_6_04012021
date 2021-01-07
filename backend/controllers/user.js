@@ -4,11 +4,11 @@ const User = require('../models/User') //On importe nos models User
 
 //On exporte notre fonction qui gère une route et on lui donne un nom
 exports.signup = (req, res, next) => { //Middleware signup
-     //On hash le mdp
+     // On hash le mdp
      bcrypt.hash(req.body.password, 10) //On appel la fonction de hash de bcrypt qui va "saler" le mot de passe 10 fois
           .then(hash => {  //On récupère le hash créé par bcrypt
                const user = new User({ //On créé un nouvel utilisateur avec le model mongoose
-                    email: req.body.email, //email fournie dans le corps de la requête
+                    email: req.body.email, //email fourni dans le corps de la requête
                     password: hash //On enregistre le hash récupéré
                })
                user.save() //On enregistre le nouvel utilisateur dans la bdd
