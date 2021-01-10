@@ -1,50 +1,86 @@
 const bcrypt = require('bcrypt')//On importe bcrypt
 const jwt = require('jsonwebtoken') //On importe jsonwebtoken
+const CryptoJS = require("crypto-js")//On importe crypto-js
 const User = require('../models/User') //On importe nos models User
 
 //On exporte notre fonction qui gère une route et on lui donne un nom
 exports.signup = (req, res, next) => { //Middleware signup
      // On hash le mdp
      bcrypt.hash(req.body.password, 10) //On appel la fonction de hash de bcrypt qui va "saler" le mot de passe 10 fois
-          .then(hash => {  //On récupère le hash créé par bcrypt
-               const user = new User({ //On créé un nouvel utilisateur avec le model mongoose
-                    email: req.body.email, //email fourni dans le corps de la requête
-                    password: hash //On enregistre le hash récupéré
-               })
-               user.save() //On enregistre le nouvel utilisateur dans la bdd
-                    .then(() => res.status(201).json({ message: 'Utilisateur créé !' })) //On renvoie une création de ressource
-                    .catch(error => res.status(400).json({ error })) //Erreur Bad Request
+     .then(hash => {  //On récupère le hash créé par bcrypt
+          const user = new User({ //On créé un nouvel utilisateur avec le model mongoose
+               email: req.body.email, //email fourni dans le corps de la requête
+               password: hash //On enregistre le hash récupéré
           })
-          .catch(error => res.status(500).json({ error }))
+          console.log("user après hash password", user)
+          bcrypt.hash(user.email, 10)
+          .then(hash => {
+               user.update(user.email = hash)
+               console.log("user après hash email ", user)
+               console.log("user avant save", user)
+               user.save() //On enregistre le nouvel utilisateur dans la bdd
+               .then(user => {
+                    console.log("user save", user)
+                    res.status(201).json({ message: 'Utilisateur créé !' })
+               }) //On renvoie une création de ressource
+               .catch(error => res.status(401).json({ error })) //Erreur Bad Request
+          })
+          .catch(error => res.status(401).json({ error })) //Erreur Bad Request
+     })
+     .catch(error => res.status(500).json({ error }))
 }
 
 //On exporte notre middleware login
 exports.login = (req, res, next) => { //Middleware login
-     User.findOne({ email: req.body.email }) //On cherche l'utilisateur unique correspondant dans la bdd
-          .then(user => { //On vérifie si on récupère un user
-               if (!user) { //Si non
-                    return res.status(401).json({ error: 'Utilisateur non trouvé !' }) //Erreur Unauthorized
-               }
-               //Si oui
-               //On compare le mdp entré par l'user avec le hash dans la bdd
-               bcrypt.compare(req.body.password, user.password) //On utilise la fonction compare() de bcrypt
+     console.log("req login", req.body)
+     User.find() //Sort tableau de tous les users
+     .then(users => {
+          console.log("Nombre de users", users.length)
+          if (users.length === 0) { //Si non
+               return res.status(401).json({ error: 'Utilisateur non trouvé !' }) //Erreur Unauthorized
+          }
+          console.log("Tableau des users", users)
+          users.forEach(user => {
+               console.log("user dans forEach", user)
+               // console.log("L'user.email de chaque users", user.email)
+               // console.log("req.body.email", req.body.email)
+               bcrypt.compare(req.body.email, user.email)
+               .then(valid => {
+                    const emailInvalid = []
+                    if(!valid){
+                         console.log("valid", valid)
+                         console.log("user si email invalid", user)
+                         // emailInvalid.push(user)
+                         console.log("emailInvalid", emailInvalid)
+                         console.log("users.length", users)
+                         // if(){
+                         console.log("emailInvalid", emailInvalid.length)
+                         //      return res.status(401).json({ error: 'Mot de passe incorect !' }) //Erreur Unauthorized
+                         // }
+                         return emailInvalid.push(user)
+                    }
+                    console.log("emailInvalid 222", emailInvalid.length)
+                    console.log("user si email valid", user)
+                    bcrypt.compare(req.body.password, user.password)
                     .then(valid => {
-                         if (!valid) { //Si comparaison invalide (false)
+                         if(!valid){
+                              console.log("user si mdp invalid", user)
                               return res.status(401).json({ error: 'Mot de passe incorect !' }) //Erreur Unauthorized
                          }
-                         res.status(200).json({ //Si comparaison valide on renvoi un json:
-                              userId: user._id, //Le user id dans la bdd
-                              token: jwt.sign( //On utilise la fonction sign de jsonwebtoken qui prend 3 arguments
-                                   //Les données à encoder (le payload)
-                                   { userId: user._id }, //Le token contient l'ID dans le payload du token 
-                                   //La clef secret pour l'encodage
-                                   'RANDOM_TOKEN_SECRET', //A complexifier pour la production
-                                   //L'argument de configuration
-                                   { expiresIn: '24h' } //On applique une expiration à notre token
+                         console.log("user si mdp valid", user)
+                         res.status(200).json({
+                              userId: user._id,
+                              token: jwt.sign(
+                                   { userId: user._id },
+                                   'RANDOM_TOKEN_SECRET',
+                                   { expiresIn: '24h' }
                               )
                          })
                     })
-                    .catch(error => req.status(500).json({ error })) //Erreur Internal Server Error
-          })
-          .catch(error => req.status(500).json({ error })) //Erreur Internal Server Error (de mongo)
+                    .catch(error => res.status(500).json({ error })) //Erreur Internal Server Error
+               })
+               .catch(error => res.status(500).json({ error })) //Erreur Internal Server Error
+          });
+     })
+     .catch(error => req.status(500).json({ error })) //Erreur Internal Server Error (de mongo)
 }
