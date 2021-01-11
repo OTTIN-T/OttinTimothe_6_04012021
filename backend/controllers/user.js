@@ -21,9 +21,9 @@ exports.signup = (req, res, next) => { //Middleware signup
                          .then(user => {
                               res.status(201).json({ message: 'Utilisateur créé !' })
                          })
-                         .catch(error => res.status(401).json({ error })) //Erreur Bad Request
+                         .catch(error => res.status(401).json({ message: 'impossible de créer l\'utilisateur' })) //Erreur Bad Request
                     })
-                    .catch(error => res.status(401).json({ error })) //Erreur Bad Request
+                    .catch(error => res.status(500).json({ error })) //Erreur server
                })
                .catch(error => res.status(500).json({ error })) //Erreur server
           } else if (users.length >= 1) { //Si bdd a au moins un user
@@ -34,7 +34,7 @@ exports.signup = (req, res, next) => { //Middleware signup
                     .then(valid => {
                          if (valid === true) { //Si comparaison valide
                               trueTable.push(valid) //On push dans notre tableau
-                              res.status(401).json({ message: 'Utilisateur existant !' }) //Erreur Unauthorized
+                              res.status(406).json({ message: 'Utilisateur existant !' }) //Erreur Not Acceptable 
                          } else if (valid === false) { //Si comparaison invalide
                               falseTable.push(valid) //On push dans notre tableau
                               if (falseTable.length === users.length) { //Si tous nos users renvoi false, on créé un user
@@ -51,21 +51,21 @@ exports.signup = (req, res, next) => { //Middleware signup
                                              .then(user => {
                                                   res.status(201).json({ message: 'Utilisateur créé !' })
                                              })
-                                             .catch(error => res.status(401).json({ error })) //Erreur Bad Request
+                                             .catch(error => res.status(401).json({ message: 'impossible de créer l\'utilisateur' })) //Erreur Bad Request
                                         })
-                                        .catch(error => res.status(401).json({ error })) //Erreur Bad Request
+                                        .catch(error => res.status(500).json({ error })) //Erreur serveur
                                    })
-                                   .catch(error => res.status(500).json({ error }))
+                                   .catch(error => res.status(500).json({ error })) //Erreur serveur
                               } else if (trueTable.length === 1) { //Si un user à renvoyé true à la comparaison
-                                   res.status(401).json({ message: 'Utilisateur existant !' })
+                                   res.status(406).json({ message: 'Utilisateur existant !' }) //Erreur Not Acceptable 
                               }
                          }
                     })
-                    .catch(error => res.status(500).json({ error }))
+                    .catch(error => res.status(500).json({ error })) //Erreur serveur
                })
           }
      })
-     .catch(error => req.status(500).json({ error }))
+     .catch(error => req.status(500).json({ error })) //Erreur serveur
 }
 
 //On exporte notre middleware login
@@ -96,7 +96,7 @@ exports.login = (req, res, next) => { //Middleware login
                               userId: user._id, //On renvoi l'id de la bss
                               token: jwt.sign( //On renvoi un token
                                    { userId: user._id },
-                                   'RANDOM_TOKEN_SECRET',
+                                   process.env.JWT_RAND_SECRET,
                                    { expiresIn: '24h' }
                               )
                          })

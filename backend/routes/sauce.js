@@ -14,4 +14,4 @@ router.put('/:id', auth, multer, sauceCtrl.modifySauce) // ":" en face du segmen
 router.post('/:id/like', auth, multer, sauceCtrl.likeSauce)
 router.delete('/:id', auth, sauceCtrl.deleteSauce) 
 
-module.exports = router; //On exporte notre router pour l'importer dans app.js
+module.exports = router //On exporte notre router pour l'importer dans app.js
