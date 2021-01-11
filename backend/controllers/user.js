@@ -4,6 +4,11 @@ const User = require('../models/User') //On importe nos models User
 
 //On exporte notre fonction qui gère une route et on lui donne un nom
 exports.signup = (req, res, next) => { //Middleware signup
+     const regexPassword = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{3,}$/gm //Regex pour le password
+     if (regexPassword.exec(req.body.password) == null){ //Si null
+          res.status(406).json({ message: 'Mot de passe incorrect' }) //Erreur Not Acceptable 
+          return false
+     }
      User.find() //On récupère nos users dans la bdd
      .then(users => {
           console.log("Taille du tableau users au find", users.length)
@@ -56,9 +61,7 @@ exports.signup = (req, res, next) => { //Middleware signup
                                         .catch(error => res.status(500).json({ error })) //Erreur serveur
                                    })
                                    .catch(error => res.status(500).json({ error })) //Erreur serveur
-                              } else if (trueTable.length === 1) { //Si un user à renvoyé true à la comparaison
-                                   res.status(406).json({ message: 'Utilisateur existant !' }) //Erreur Not Acceptable 
-                              }
+                              } 
                          }
                     })
                     .catch(error => res.status(500).json({ error })) //Erreur serveur
@@ -83,14 +86,14 @@ exports.login = (req, res, next) => { //Middleware login
                     if (!valid) { //Si comparaison invalid 
                          emailInvalid.push(user) //On push dans notre tableau
                          if (emailInvalid.length === users.length) { //Si tous les users renvoi invalid
-                              return res.status(401).json({ error: 'Mot de passe incorect !' }) //Erreur Unauthorized
+                              return res.status(406).json({ error: 'Mot de passe incorect !' }) //Erreur Not Acceptable 
                          }
                          return
                     }
                     bcrypt.compare(req.body.password, user.password) //Si comparaison valid, on compare nos mdp
                     .then(valid => {
                          if (!valid) { //Si mdp invalid
-                              return res.status(401).json({ error: 'Mot de passe incorect !' }) //Erreur Unauthorized
+                              return res.status(406).json({ error: 'Mot de passe incorect !' }, headers.url('test')) //Erreur Not Acceptable 
                          }
                          res.status(200).json({
                               userId: user._id, //On renvoi l'id de la bss
