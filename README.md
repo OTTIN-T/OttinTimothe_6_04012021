@@ -11,6 +11,7 @@ Like/dislike d'une ressource.
 Le site respecte le top 10 de l'OWASP et les bonnes pratiques de sécurité d'une application web.
 
 # Pour pouvoir utiliser cette application:
+- Lisez le .env.example
 - Dans un terminal: cd frontend, npm install, npm start
 - Dans un terminal: cd backend, npm install, npm start 
 - Rendez-vous sur `http://localhost:4200/`
