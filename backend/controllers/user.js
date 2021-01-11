@@ -93,7 +93,7 @@ exports.login = (req, res, next) => { //Middleware login
                     bcrypt.compare(req.body.password, user.password) //Si comparaison valid, on compare nos mdp
                     .then(valid => {
                          if (!valid) { //Si mdp invalid
-                              return res.status(406).json({ error: 'Mot de passe incorect !' }, headers.url('test')) //Erreur Not Acceptable 
+                              return res.status(406).json({ error: 'Mot de passe incorect !' }) //Erreur Not Acceptable 
                          }
                          res.status(200).json({
                               userId: user._id, //On renvoi l'id de la bss
