@@ -86,7 +86,7 @@ exports.login = (req, res, next) => { //Middleware login
                     if (!valid) { //Si comparaison invalid 
                          emailInvalid.push(user) //On push dans notre tableau
                          if (emailInvalid.length === users.length) { //Si tous les users renvoi invalid
-                              return res.status(406).json({ error: 'Mot de passe incorect !' }) //Erreur Not Acceptable 
+                              return res.status(406).json({ error: 'Email incorect !' }) //Erreur Not Acceptable 
                          }
                          return
                     }
