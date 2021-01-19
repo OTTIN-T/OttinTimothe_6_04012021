@@ -15,6 +15,7 @@ Ainsi que les règles RGPD.
 Le site se devait d'uitiliser node.js, Express et MongoDB (avec mongoose).
 
 # Pour pouvoir utiliser cette application:
+- Créez un dossier images dans le dossier backend
 - Lisez et suivez le .env.example,
 - Ouvrez dans votre IDE le dossier contenant le dossier frontend et backend,
 - Dans un terminal: cd frontend, npm install, npm start
