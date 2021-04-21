@@ -4,6 +4,10 @@ import { Sauce } from '../models/Sauce.model';
 import { HttpClient } from '@angular/common/http';
 import { AuthService } from './auth.service';
 
+let apiURL =
+  location.hostname === "localhost" || location.hostname === "127.0.0.1"
+    ? "http://localhost:3000"
+    : "https://appsopekocko.herokuapp.com";
 @Injectable({
   providedIn: 'root'
 })
@@ -87,7 +91,7 @@ export class SaucesService {
               private auth: AuthService) {}
 
   getSauces() {
-    this.http.get('http://localhost:3000/api/sauces').subscribe(
+    this.http.get(`${apiURL}/api/sauces`).subscribe(
       (sauces: Sauce[]) => {
         this.sauces$.next(sauces);
       },
@@ -100,7 +104,7 @@ export class SaucesService {
 
   getSauceById(id: string) {
     return new Promise((resolve, reject) => {
-      this.http.get('http://localhost:3000/api/sauces/' + id).subscribe(
+      this.http.get(`${apiURL}/api/sauces/${id}`).subscribe(
         (sauce: Sauce) => {
           resolve(sauce);
         },
@@ -113,8 +117,7 @@ export class SaucesService {
 
   likeSauce(id: string, like: boolean) {
     return new Promise((resolve, reject) => {
-      this.http.post(
-        'http://localhost:3000/api/sauces/' + id + '/like',
+      this.http.post(`${apiURL}/api/sauces/${id}/like`,
         {
           userId: this.auth.getUserId(),
           like: like ? 1 : 0
@@ -133,7 +136,7 @@ export class SaucesService {
   dislikeSauce(id: string, dislike: boolean) {
     return new Promise((resolve, reject) => {
       this.http.post(
-        'http://localhost:3000/api/sauces/' + id + '/like',
+        `${apiURL}/api/sauces/${id}/like`,
         {
           userId: this.auth.getUserId(),
           like: dislike ? -1 : 0
@@ -154,7 +157,7 @@ export class SaucesService {
       const formData = new FormData();
       formData.append('sauce', JSON.stringify(sauce));
       formData.append('image', image);
-      this.http.post('http://localhost:3000/api/sauces', formData).subscribe(
+      this.http.post(`${apiURL}/api/sauces`, formData).subscribe(
         (response: { message: string }) => {
           resolve(response);
         },
@@ -168,7 +171,7 @@ export class SaucesService {
   modifySauce(id: string, sauce: Sauce, image: string | File) {
     return new Promise((resolve, reject) => {
       if (typeof image === 'string') {
-        this.http.put('http://localhost:3000/api/sauces/' + id, sauce).subscribe(
+        this.http.put(`${apiURL}/api/sauces/${id}`, sauce).subscribe(
           (response: { message: string }) => {
             resolve(response);
           },
@@ -180,7 +183,7 @@ export class SaucesService {
         const formData = new FormData();
         formData.append('sauce', JSON.stringify(sauce));
         formData.append('image', image);
-        this.http.put('http://localhost:3000/api/sauces/' + id, formData).subscribe(
+        this.http.put(`${apiURL}/api/sauces/${id}`, formData).subscribe(
           (response: { message: string }) => {
             resolve(response);
           },
@@ -194,7 +197,7 @@ export class SaucesService {
 
   deleteSauce(id: string) {
     return new Promise((resolve, reject) => {
-      this.http.delete('http://localhost:3000/api/sauces/' + id).subscribe(
+      this.http.delete(`${apiURL}/api/sauces/${id}`).subscribe(
         (response: { message: string }) => {
           resolve(response);
         },
