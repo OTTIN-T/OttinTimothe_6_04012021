@@ -4,24 +4,23 @@
 Projet réalisé par OTTIN Timothé. 
 
 Ceci est le projet numéro 6 de la formation développeur web d'OpenClassrooms.
-Le projet consistais à la réalisation d'une API pour le backend d'un site. Le frontend du site était fournie par OpenClassrooms. 
+Le projet consistait à la réalisation d'une API pour le backend d'un site. Le frontend du site était fourni par OpenClassrooms. 
 
-Le site se devait d'utiliser un serveur Node.js avec Express et avoir une base de donnée MongoDB.
+Le site se devait d'utiliser un serveur Node.js avec Express et avoir une base de données MongoDB.
 
 
 L'API Rest (CRUD) gère:
 - L'inscription d'un utilisateur sur le site,
-- Les différents comportements d'un utilisateurs,
+- Les différents comportements d'un utilisateur,
 - L'ajout/modification/suppression d'une ressource,
 - Like/dislike d'une ressource.
-- Le site respecte les bonnes pratiques de sécurité d'une application web et de l'OWASP. Ainsi que les règles RGPD.
+- Le site respecte les bonnes pratiques de sécurité d'une application web et de l'OWASP, ainsi que les règles RGPD.
 
+Ceci est mon premier projet avec Node.JS et je n'avais jamais manipulé de base de données. 
 
-Ceci est mon premier projet avec Node.JS et je n'avais jamais manipulé de basse de donnée. 
+Ce projet fut réalisé en quasi-totale autonomie. J'avais l'aide d'un mentor OpenClassrooms une fois par semaine. 
 
-Ce projet à été réalisé en quasi-totale autonomie. J'avais l'aide d'un mentor OpenClassrooms une fois par semaine. 
-
-Ce projet fus évalué par un mentor évaluateur OpenClassrooms. Il validais si le projet était conforme aux attentes lors d'une soutenance.
+Ce projet fut évalué par un mentor évaluateur OpenClassrooms. Il validait si le projet était conforme aux attentes lors d'une soutenance.
 
 ## Installation
 
